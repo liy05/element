@@ -452,7 +452,7 @@ export default {
       if (data.treeNode.hasChildren) {
         ele.push(<div class={ ['el-table__expand-icon', data.treeNode.expanded ? 'el-table__expand-icon--expanded' : '']}
           on-click={this.handleTreeExpandIconClick.bind(this, data)}>
-          <i class='el-icon el-icon-arrow-right'></i>
+          <i class='el-icon el-icon-caret-right'></i>
         </div>);
       } else {
         ele.push(<span class="el-table__placeholder"></span>);
