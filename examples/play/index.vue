@@ -1,72 +1,43 @@
 <template>
-  <div class="app-container projectselect" style="min-width:1024" v-loading="pageLoading">
-    <div class="filter-container">
-      <el-input
-        v-model="projectname"
-        @keyup.enter.native="initPage"
-        placeholder="请输入项目名称"
-        style="width: 400px;vertical-align: middle;margin-bottom: 10px;"
-        class="input-with-select"
-      >
-        <el-button slot="append" type="primary" @click="initPage" icon="el-icon-search"/>
-      </el-input>
-    </div>
-    <el-row :gutter="6">
-      <el-col :span="24">
         <el-table
           v-loading="listLoading"
-          style="width: 99%"
           :data="list"
-          border
-          fit
           row-key="id"
+          border
           :isTreeExpandAll="true"
+          fix
+          height="150"
         >
-          <el-table-column min-width="150px" label="项目分期名称">
+          <el-table-column  label="项目分期名称">
             <template slot-scope="scope">{{ scope.row.name }}</template>
           </el-table-column>
-          <el-table-column min-width="150px" label="版本名称">
+          <el-table-column label="版本名称">
             <template slot-scope="scope">{{ scope.row.versionName }}</template>
           </el-table-column>
           <el-table-column label="所属公司">
             <template slot-scope="scope">{{ scope.row.buName }}</template>
           </el-table-column>
           <el-table-column label="审核状态">
-            <template slot-scope="scope">{{ scope.row.approveState | stateFilter }}</template>
+            <template slot-scope="scope">{{ scope.row.approveState }}</template>
           </el-table-column>
           <el-table-column label="编制人">
             <template slot-scope="scope">{{ scope.row.creationName }}</template>
           </el-table-column>
           <el-table-column label="编制日期">
             <template slot-scope="scope">
-              {{ scope.row.creationTime | moment("YYYY-MM-DD HH:MM:SS") }}
+              {{ scope.row.creationTime}}
               <!-- {{moment(scope.row.creationTime,"MM-DD-YYYY")}} -->
             </template>
           </el-table-column>
-          <el-table-column width="250px" label="操作">
+          <!-- <el-table-column width="250px" label="操作">
             <template slot-scope="scope">
               <el-button
                 type="primary"
                 size="mini"
               >选择</el-button>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
-        <div class="pagination-container">
-          <el-pagination
-            :current-page="currentPage"
-            :page-sizes="[10,20,30,50]"
-            :page-size="limit"
-            :total="total"
-            background
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-          />
-        </div>
-      </el-col>
-    </el-row>
-  </div>
 </template>
 
 <script>

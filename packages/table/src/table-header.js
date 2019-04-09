@@ -85,7 +85,7 @@ export default {
             this._l(this.columns, column => <col name={ column.id } />)
           }
           {
-            this.hasGutter ? <col name="gutter" /> : ''
+            this.hasGutter ? <col name="gutter" style="display:none" /> : ''
           }
         </colgroup>
         <thead class={ [{ 'is-group': isGroup, 'has-gutter': this.hasGutter }] }>
