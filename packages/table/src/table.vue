@@ -340,7 +340,12 @@
 
       lazy: Boolean,
 
-      load: Function
+      load: Function,
+
+      isTreeExpandAll: {
+        type: Boolean,
+        default: false
+      }
     },
 
     components: {
@@ -496,13 +501,13 @@
           children.forEach(item => {
             const rowKey = this.getRowKey(item);
             treeData[rowKey] = {
-              display: false,
+              display: this.isTreeExpandAll,
               level
             };
             parentData.children.push(rowKey);
             if (Array.isArray(item.children) && item.children.length) {
               treeData[rowKey].children = [];
-              treeData[rowKey].expanded = false;
+              treeData[rowKey].expanded = this.isTreeExpandAll;
               traverse(item.children, treeData[rowKey], level + 1);
             }
           });
@@ -514,7 +519,7 @@
             const rowKey = this.getRowKey(item);
             const treeNode = {
               level: 0,
-              expanded: false,
+              expanded: this.isTreeExpandAll,
               display: true,
               children: []
             };
