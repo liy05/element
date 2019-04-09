@@ -345,7 +345,7 @@
       isTreeExpandAll: {
         type: Boolean,
         default: false
-      },
+      }
     },
 
     components: {

@@ -446,7 +446,6 @@ export default {
 
   methods: {
     renderTreeCell(data) {
-      debugger
       if (!data.treeNode) return null;
       const ele = [];
       ele.push(<span class="el-table__indent" style={{'padding-left': data.treeNode.indent + 'px'}}></span>);
