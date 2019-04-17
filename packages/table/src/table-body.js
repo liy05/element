@@ -1,3 +1,4 @@
+/* eslint-disable semi */
 import { getCell, getColumnByCell, getRowIdentity } from './util';
 import { getStyle, hasClass } from 'element-ui/src/utils/dom';
 import ElCheckbox from 'element-ui/packages/checkbox';
@@ -67,6 +68,7 @@ export default {
           {
             this._l(rows, (row, $index) => {
               const rowKey = this.table.rowKey ? this.getKeyOfRow(row, $index) : $index;
+              // 树data
               const treeNode = this.treeData[rowKey];
               const rowClasses = this.getRowClass(row, $index);
               if (treeNode) {

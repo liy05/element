@@ -345,6 +345,10 @@
       isTreeExpandAll: {
         type: Boolean,
         default: false
+      },
+      isTree: {
+        type: Boolean,
+        default: false
       }
     },
 
@@ -665,8 +669,10 @@
       data: {
         immediate: true,
         handler(value) {
-          this.store.states.treeData = this.getTableTreeData(value);
-          value = flattenData(value);
+          if (this.isTree) {
+            this.store.states.treeData = this.getTableTreeData(value);
+            value = flattenData(value);
+          }
           this.store.commit('setData', value);
           if (this.$ready) {
             this.$nextTick(() => {
@@ -718,6 +724,7 @@
       const store = new TableStore(this, {
         rowKey: this.rowKey,
         defaultExpandAll: this.defaultExpandAll,
+        isTree: this.isTree,
         selectOnIndeterminate: this.selectOnIndeterminate,
         indent: this.indent,
         lazy: this.lazy
