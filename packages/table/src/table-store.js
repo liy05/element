@@ -1,3 +1,5 @@
+/* eslint-disable semi */
+/* eslint-disable no-debugger */
 import Vue from 'vue';
 import debounce from 'throttle-debounce/debounce';
 import merge from 'element-ui/src/utils/merge';

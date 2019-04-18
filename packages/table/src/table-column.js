@@ -189,6 +189,10 @@ export default {
       validator(val) {
         return val.every(order => ['ascending', 'descending', null].indexOf(order) > -1);
       }
+    },
+    tree: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -276,7 +280,8 @@ export default {
       filteredValue: this.filteredValue || [],
       filterPlacement: this.filterPlacement || '',
       index: this.index,
-      sortOrders: this.sortOrders
+      sortOrders: this.sortOrders,
+      tree: this.tree
     });
 
     let source = forced[type] || {};
@@ -449,7 +454,7 @@ export default {
       if (!data.treeNode) return null;
       const ele = [];
       ele.push(<span class="el-table__indent" style={{'padding-left': data.treeNode.indent + 'px'}}></span>);
-      if (data.treeNode.hasChildren) {
+      if (data.treeNode.hasChildren && !this.tree) {
         ele.push(<div class={ ['el-table__expand-icon', data.treeNode.expanded ? 'el-table__expand-icon--expanded' : '']}
           on-click={this.handleTreeExpandIconClick.bind(this, data)}>
           <i class='el-icon el-icon-caret-right'></i>
@@ -488,7 +493,6 @@ export default {
         this.columnConfig.renderHeader = (h, scope) => this.$scopedSlots.header(scope);
       }
     }
-
     owner.store.commit('insertColumn', this.columnConfig, columnIndex, this.isSubColumn ? parent.columnConfig : null);
   }
 };

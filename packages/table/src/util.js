@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import { getValueByPath } from 'element-ui/src/utils/util';
 
 export const getCell = function(event) {

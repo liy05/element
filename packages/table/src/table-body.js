@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 /* eslint-disable semi */
 import { getCell, getColumnByCell, getRowIdentity } from './util';
 import { getStyle, hasClass } from 'element-ui/src/utils/dom';
@@ -97,7 +98,8 @@ export default {
                         column,
                         $index
                       };
-                      if (cellIndex === this.firstDefaultColumnIndex && treeNode) {
+                      // 原table 默认第一个字段树形tree，修改为其他字段也可以树形tree
+                      if ((cellIndex === this.firstDefaultColumnIndex || this.treeColumnIndex.indexOf(cellIndex) >= 0) && treeNode) {
                         data.treeNode = {
                           hasChildren: treeNode.hasChildren || (treeNode.children && treeNode.children.length),
                           expanded: treeNode.expanded,
@@ -199,7 +201,15 @@ export default {
       }
       return 0;
     },
-
+    treeColumnIndex() {
+      let result = []
+      for (let index = 0; index < this.columns.length; index++) {
+        if (this.columns[index].tree && this.columns[index].tree === true) {
+          result.push(index);
+        }
+      }
+      return result;
+    },
     treeIndent() {
       return this.store.states.indent;
     }
