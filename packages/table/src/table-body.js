@@ -1,7 +1,7 @@
 /* eslint-disable no-debugger */
 /* eslint-disable semi */
 import { getCell, getColumnByCell, getRowIdentity } from './util';
-import { getStyle, hasClass } from 'element-ui/src/utils/dom';
+import { getStyle, hasClass, removeClass, addClass } from 'element-ui/src/utils/dom';
 import ElCheckbox from 'element-ui/packages/checkbox';
 import ElTooltip from 'element-ui/packages/tooltip';
 import debounce from 'throttle-debounce/debounce';
@@ -37,7 +37,7 @@ export default {
         prev.push(item);
         const rowKey = this.store.table.getRowKey(item);
         const parent = this.store.states.treeData[rowKey];
-        if (parent && parent.children) {
+        if (parent && parent.children && parent.hasChildren) {
           const tmp = [];
           const traverse = (children) => {
             if (!children) return;
@@ -91,11 +91,15 @@ export default {
                     if (!rowspan || !colspan) {
                       return '';
                     } else {
+                      const columnData = { ...column };
+                      if (colspan !== 1) {
+                        columnData.realWidth = columnData.realWidth * colspan;
+                      }
                       const data = {
                         store: this.store,
                         _self: this.context || this.table.$vnode.context,
+                        column: columnData,
                         row,
-                        column,
                         $index
                       };
                       // 原table 默认第一个字段树形tree，修改为其他字段也可以树形tree
@@ -215,6 +219,23 @@ export default {
     }
   },
 
+  watch: {
+    // don't trigger getter of currentRow in getCellClass. see https://jsfiddle.net/oe2b4hqt/
+    // update DOM manually. see https://github.com/ElemeFE/element/pull/13954/files#diff-9b450c00d0a9dec0ffad5a3176972e40
+    'store.states.hoverRow'(newVal, oldVal) {
+      if (!this.store.states.isComplex) return;
+      const rows = this.$el.querySelectorAll('.el-table__row');
+      const oldRow = rows[oldVal];
+      const newRow = rows[newVal];
+      if (oldRow) {
+        removeClass(oldRow, 'hover-row');
+      }
+      if (newRow) {
+        addClass(newRow, 'hover-row');
+      }
+    }
+  },
+
   data() {
     return {
       tooltipContent: ''
@@ -287,10 +308,6 @@ export default {
       const classes = ['el-table__row'];
       if (this.table.highlightCurrentRow && row === this.store.states.currentRow) {
         classes.push('current-row');
-      }
-
-      if (rowIndex === this.store.states.hoverRow) {
-        classes.push('hover-row');
       }
 
       if (this.stripe && rowIndex % 2 === 1) {

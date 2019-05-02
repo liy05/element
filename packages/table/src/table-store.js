@@ -261,7 +261,7 @@ TableStore.prototype.mutations = {
   changeSortCondition(states, options) {
     states.data = sortData((states.filteredData || states._data || []), states);
 
-    if (!options || !options.silent) {
+    if (!options || !(options.silent || options.init)) {
       this.table.$emit('sort-change', {
         column: this.states.sortingColumn,
         prop: this.states.sortProp,
@@ -273,7 +273,7 @@ TableStore.prototype.mutations = {
   },
 
   sort(states, options) {
-    const { prop, order } = options;
+    const { prop, order, init } = options;
     if (prop) {
       states.sortProp = prop;
       states.sortOrder = order || 'ascending';
@@ -288,7 +288,9 @@ TableStore.prototype.mutations = {
         }
 
         if (states.sortingColumn) {
-          this.commit('changeSortCondition');
+          this.commit('changeSortCondition', {
+            init: init
+          });
         }
       });
     }
