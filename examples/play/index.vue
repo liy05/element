@@ -1,215 +1,224 @@
 <template>
-  <div>
-    <!--基本信息-->
-    <el-card class="editCard">
-      <div
-        slot="header"
-        class="clearfix"
-      >
-        <i
-          class="el-icon-tickets"
-          style="color:RGB(255,204,102)"
-        ></i>
-        <span style="margin-left:10px;">项目开发计划</span>
-      </div>
+  <el-card class="editCard">
+    <div
+      slot="header"
+      class="clearfix"
+    >
+      <i
+        class="el-icon-news"
+        style="color:RGB(255,204,102)"
+      ></i>
+      <span style="margin-left:10px;">成本支付计划</span>
+      <span style="float:right;height:21px;padding:0px">支付年限:
+        <el-select
+          size="mini"
+          style="width:150px;height:21px"
+          v-model="year"
+          placeholder="请选择"
+          @change="handleChange"
+        >
+          <el-option
+            :label="2"
+            :value="2"
+          ></el-option>
+          <el-option
+            :label="3"
+            :value="3"
+          ></el-option>
+          <el-option
+            :label="4"
+            :value="4"
+          ></el-option>
+          <el-option
+            :label="5"
+            :value="5"
+          ></el-option>
+          <el-option
+            :label="6"
+            :value="6"
+          ></el-option>
+
+        </el-select>
+        填写维度:
+        <el-select
+          style="width:150px;height:21px"
+          size="mini"
+          v-model="wd"
+          placeholder="请选择"
+          @change="handleChange"
+        >
+          <el-option
+            label="年度"
+            value="年度"
+          ></el-option>
+          <el-option
+            label="季度"
+            value="季度"
+          ></el-option>
+          <el-option
+            label="月度"
+            value="月度"
+          ></el-option>
+        </el-select>
+        <el-checkbox v-model="showRate">显示支付比例</el-checkbox>
+      </span>
+    </div>
+    <template>
       <el-table
         :data="data"
         border
+        fit
         style="width: 100%"
         :isTree="true"
         row-key="id"
+        :isTreeExpandAll="true"
+        :highlight-current-row="true"
       >
         <el-table-column
           file-icon="icon icon-file"
           folder-icon="icon icon-folder"
           prop="bd"
-          label="标段"
+          label="序号"
           width="220"
           treeKey="bd"
           :expandAll="true"
         ></el-table-column>
         <el-table-column
           prop="bd1"
-          label="产品类型"
+          label="科目"
           width="180"
-          :tree="true"
         >
         </el-table-column>
         <el-table-column
           prop="bd2"
-          label="产品名称"
+          label="目标成本"
           width="180"
-          :tree="true"
+        >
+        </el-table-column>
+
+        <el-table-column
+          prop="bd3"
+          label="合计比例"
         >
         </el-table-column>
         <el-table-column
           prop="bd3"
-          label="楼栋"
+          label="进项税率（%）"
         >
         </el-table-column>
-        <!-- <el-table-column label="土地获取">
-          <template slot-scope="scope">
-          </template>
-        </el-table-column> -->
+        <el-table-column
+          prop="bd3"
+          label="进项税（万元）"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="bd3"
+          label="合计金额（万元）"
+        >
+        </el-table-column>
+        <el-table-column
+          label="小计支付税额"
+          align="center"
+        >
+          <el-table-column
+            :prop="`${currentYear}年前`"
+            :label="`${currentYear}年前`"
+          >
+          </el-table-column>
+          <el-table-column
+            v-for="yearindex in year"
+            :key="`${currentYear+yearindex-1}年`"
+            :prop="`${currentYear+yearindex-1}年`"
+            :label="`${currentYear+yearindex-1}年`"
+          >
+          </el-table-column>
+          <el-table-column
+            :prop="`${currentYear+year-1}年以后`"
+            :label="`${currentYear+year-1}年以后`"
+          >
+          </el-table-column>
+        </el-table-column>
+
+        <!-- 年份详细 -->
+        <el-table-column
+          v-for="yearindex in year"
+          :key="`${currentYear+yearindex-1}年_详细`"
+          :label="`${currentYear+yearindex-1}年`"
+          align="center"
+        >
+          <el-table-column
+            v-for="wditem in wdArr"
+            :key="`${currentYear+yearindex-1}年_${wditem}`"
+            :prop="`${currentYear+yearindex-1}年_${wditem}`"
+            :label="wditem"
+          >
+          </el-table-column>
+        </el-table-column>
+        <el-table-column
+          :prop="`${currentYear+year-1}年以后`"
+          :label="`${currentYear+year-1}年以后`"
+        >
+        </el-table-column>
       </el-table>
-    </el-card>
-  </div>
+    </template>
+  </el-card>
 </template>
 
 <script>
+import DynamicsColumn from "./DynamicsColumn";
+
+const currentDate = new Date();
+const currentYear = parseInt(currentDate.getFullYear());
+
 export default {
-  name: "DevelopmentPlan",
+  name: "CostTaxesPay",
+  components: { DynamicsColumn },
   data() {
     return {
-      test: "222", // 模拟的数据
-      ytTable: [{}], // 模拟的数据
-      columns: [
-        {
-          title: "标段",
-          key: "bd"
-        },
-        {
-          title: "产品类型",
-          key: "bd1"
-        },
-        {
-          title: "产品名称",
-          key: "bd2"
-        },
-        {
-          title: "楼栋",
-          key: "bd3"
-        },
-        {
-          title: "土地获取",
-          key: "td",
-          type: "template",
-          template: "td"
-        }
-      ],
-      data: [
-        {
-          id:'1',
-          bd: "一标段",
-          bd1: "/",
-          bd2: "/",
-          bd3: "/",
-          td: "2018-01-01",
-          parent_id: null,
-          children: [
-            {
-              id:'2',
-              bd: "一标段",
-              bd1: "住宅",
-              bd2: "超高层",
-              bd3: "1栋",
-              td: "2018-01-01",
-            },
-            {
-              id:'3',
-              bd: "一标段",
-              bd1: "住宅",
-              bd2: "超高层",
-              bd3: "2栋",
-              td: "2018-01-01",
-            },
-            {
-              id:'4',
-              bd: "一标段",
-              bd1: "住宅",
-              bd2: "超高层",
-              bd3: "3栋",
-              td: "2018-01-01",
-            }
-          ]
-        }
-      ],
+      year: 4,
+      wd: "年度",
+      currentYear: currentYear,
+      data:[ { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "一标段", "sectionName": "一标段", "productTypeGuid": null, "productType": null, "productGuid": null, "productName": null, "bldCode": null, "bldName": null, "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "fd5a0855-5ca3-4807-bb47-637ff188ef90", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null, "children": [ { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "一标段", "sectionName": "一标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.010", "bldName": "小高层住宅10#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "451259c3-a3aa-4ced-ad31-c614b1722f7d", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "一标段", "sectionName": "一标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.037", "bldName": "底商4#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "bd33eadc-08ab-45d2-93f8-ef36c23fc9b6", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "一标段", "sectionName": "一标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.004", "bldName": "小高层住宅4#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "1a32827a-ac50-49a4-900d-9483e6a2a868", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "一标段", "sectionName": "一标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.038", "bldName": "底商5#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "db5ff032-85c3-4c4d-9c31-313d0c33e088", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "一标段", "sectionName": "一标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.009", "bldName": "小高层住宅9#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "da1f8229-b9be-44a5-b362-51568443a6ac", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "一标段", "sectionName": "一标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.005", "bldName": "小高层住宅5#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "3ef39b54-dea4-4995-9f9f-a3995c2f3840", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "一标段", "sectionName": "一标段", "productTypeGuid": "a4274faa-90cb-4b6b-a22e-2f12017f6f71", "productType": "独立商业", "productGuid": "74d29110-53ba-11e9-9f3a-631a1b30c9e4", "productName": "独立商业", "bldCode": "0791.2019.06.01.029", "bldName": "商业2#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "0f61c8e4-56b2-48e9-bf1a-b12a150abf96", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null } ] }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "二标段", "sectionName": "二标段", "productTypeGuid": null, "productType": null, "productGuid": null, "productName": null, "bldCode": null, "bldName": null, "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "732b76aa-e717-4d24-adc6-443195490c42", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null, "children": [ { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "二标段", "sectionName": "二标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.008", "bldName": "小高层住宅8#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "128c6448-c708-4a79-9daa-3a4ff2b4cbbd", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "二标段", "sectionName": "二标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.036", "bldName": "底商3#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "c8934fc9-ed96-4c27-9618-a487fc206c4b", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "二标段", "sectionName": "二标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.003", "bldName": "小高层住宅3#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "7ae7adf9-a0a3-4a69-a7d7-7695395c48a1", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null } ] }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": null, "productType": null, "productGuid": null, "productName": null, "bldCode": null, "bldName": null, "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "284887a9-df94-497f-82b8-d9373eb520de", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null, "children": [ { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "a4274faa-90cb-4b6b-a22e-2f12017f6f71", "productType": "独立商业", "productGuid": "74d29110-53ba-11e9-9f3a-631a1b30c9e4", "productName": "独立商业", "bldCode": "0791.2019.06.01.033", "bldName": "商业6#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "30d26648-42a4-4128-86f8-fdc8ede831eb", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "f7efb94f-d0b2-e211-93f0-90b11c25ccb5", "productType": "公寓", "productGuid": "42f95610-53ba-11e9-9f3a-631a1b30c9e4", "productName": "公寓", "bldCode": "0791.2019.06.01.026", "bldName": "公寓1#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "43ccbab1-9b11-4e73-a16b-3de1f83cb96a", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "bb251847-ac4c-e211-93ee-90b11c25ccb5", "productType": "公建", "productGuid": "f0680910-5444-11e9-8287-8baada4b540e", "productName": "配套公建", "bldCode": "0791.2019.06.01.045", "bldName": "配套公建", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "a5c51b2a-68df-439b-8ab6-3c1fe1020968", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "f7efb94f-d0b2-e211-93f0-90b11c25ccb5", "productType": "公寓", "productGuid": "42f95610-53ba-11e9-9f3a-631a1b30c9e4", "productName": "公寓", "bldCode": "0791.2019.06.01.027", "bldName": "公寓2#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "fa8826ba-2a73-41f3-89c1-aa8d5dc4b545", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "ca827cb5-f0c6-4aef-92af-f1508597cfc7", "productType": "地下室", "productGuid": "6c247870-53bb-11e9-9f3a-631a1b30c9e4", "productName": "地库", "bldCode": "0791.2019.06.01.044", "bldName": "地库2#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "f3f995cb-e973-4ea3-b7b3-7fdbfdbcdb22", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "a4274faa-90cb-4b6b-a22e-2f12017f6f71", "productType": "独立商业", "productGuid": "74d29110-53ba-11e9-9f3a-631a1b30c9e4", "productName": "独立商业", "bldCode": "0791.2019.06.01.032", "bldName": "商业5#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "13e5efca-2d81-4a03-9aa9-b017361b2ae5", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "f7efb94f-d0b2-e211-93f0-90b11c25ccb5", "productType": "公寓", "productGuid": "42f95610-53ba-11e9-9f3a-631a1b30c9e4", "productName": "公寓", "bldCode": "0791.2019.06.01.042", "bldName": "底商公寓楼2#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "72fffe6f-bb81-4b14-b0c0-29664f34bbcb", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "f7efb94f-d0b2-e211-93f0-90b11c25ccb5", "productType": "公寓", "productGuid": "42f95610-53ba-11e9-9f3a-631a1b30c9e4", "productName": "公寓", "bldCode": "0791.2019.06.01.041", "bldName": "底商公寓楼1#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "f024cf5c-6def-4f07-ab56-1a6c4c663c06", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "六标段", "sectionName": "六标段", "productTypeGuid": "a4274faa-90cb-4b6b-a22e-2f12017f6f71", "productType": "独立商业", "productGuid": "74d29110-53ba-11e9-9f3a-631a1b30c9e4", "productName": "独立商业", "bldCode": "0791.2019.06.01.034", "bldName": "商业7#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "d437ec64-a06a-4a48-88e3-e3e7b7f6ced6", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null } ] }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": null, "productType": null, "productGuid": null, "productName": null, "bldCode": null, "bldName": null, "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "64b0d99d-6c0c-4924-ba1e-dd2af3dde0b5", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null, "children": [ { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": "2532342c-4181-e611-93f5-90b11c25ccb5", "productType": "高层住宅", "productGuid": "1e3e1b80-53ba-11e9-9f3a-631a1b30c9e4", "productName": "高层", "bldCode": "0791.2019.06.01.001", "bldName": "高层住宅1#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "8aee0740-4cfa-4db7-8338-c4abf5fc8bac", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.035", "bldName": "底商2#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "a51cd047-0fc4-496c-b39d-26f0228f1145", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": "2532342c-4181-e611-93f5-90b11c25ccb5", "productType": "高层住宅", "productGuid": "1e3e1b80-53ba-11e9-9f3a-631a1b30c9e4", "productName": "高层", "bldCode": "0791.2019.06.01.007", "bldName": "高层住宅7#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "140d7a69-48ab-4553-8848-9ba95e231619", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.002", "bldName": "小高层住宅2#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "81154d5a-106c-4cb5-a5f8-9d714397f5eb", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": "2532342c-4181-e611-93f5-90b11c25ccb5", "productType": "高层住宅", "productGuid": "1e3e1b80-53ba-11e9-9f3a-631a1b30c9e4", "productName": "高层", "bldCode": "0791.2019.06.01.006", "bldName": "高层住宅6#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "1ea25c59-2547-44c6-9522-6c8773634aba", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": "a4274faa-90cb-4b6b-a22e-2f12017f6f71", "productType": "独立商业", "productGuid": "74d29110-53ba-11e9-9f3a-631a1b30c9e4", "productName": "独立商业", "bldCode": "0791.2019.06.01.028", "bldName": "商业1#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "3e88e6e0-5cf9-4755-91d2-365120bfda51", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": "a4274faa-90cb-4b6b-a22e-2f12017f6f71", "productType": "独立商业", "productGuid": "74d29110-53ba-11e9-9f3a-631a1b30c9e4", "productName": "独立商业", "bldCode": "0791.2019.06.01.030", "bldName": "商业3#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "b4461a70-bf5a-4284-bb8d-6f1cb8a161c1", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "三标段", "sectionName": "三标段", "productTypeGuid": "a4274faa-90cb-4b6b-a22e-2f12017f6f71", "productType": "独立商业", "productGuid": "74d29110-53ba-11e9-9f3a-631a1b30c9e4", "productName": "独立商业", "bldCode": "0791.2019.06.01.031", "bldName": "商业4#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "8a542490-7eda-4ee5-986b-47719a0081c9", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null } ] }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": null, "productType": null, "productGuid": null, "productName": null, "bldCode": null, "bldName": null, "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "b9b1c5ec-6870-4792-b858-c2e43c006bc3", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null, "children": [ { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.040", "bldName": "底商23#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "b09ab73d-6062-45f8-b6c6-578eaed78bd3", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.023", "bldName": "小高层住宅23#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "babff247-4a1d-4e8a-aa16-ba7b0d24af18", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.039", "bldName": "底商21#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "e40b29aa-e324-454d-b6e8-7e888c39a1bb", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.022", "bldName": "小高层住宅22#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "313685b7-6c40-47f3-b432-804352ac0561", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.025", "bldName": "小高层住宅25#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "0de29476-4f42-4ff1-9630-c28f5d3e9c5d", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.017", "bldName": "小高层住宅17#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "af771832-0f0d-4a51-b81f-8038c174c2b9", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.020", "bldName": "小高层住宅20#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "7c22209d-58a8-427a-8afc-f21ea193c814", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.021", "bldName": "小高层住宅21#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "cd71a591-45bd-49c0-871f-a7d55c5ecedb", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.024", "bldName": "小高层住宅24#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "250afef3-5d8c-4865-8caf-47fae88abf3c", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.018", "bldName": "小高层住宅18#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "c3686d47-202b-49e9-a669-d4800d9b0fef", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "五标段", "sectionName": "五标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.019", "bldName": "小高层住宅19#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "4e8516c3-b2a5-40d3-993b-8b1358c738cf", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null } ] }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "四标段", "sectionName": "四标段", "productTypeGuid": null, "productType": null, "productGuid": null, "productName": null, "bldCode": null, "bldName": null, "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "eebab4e2-01bc-4311-8d13-4f82bf592b1f", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null, "children": [ { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "四标段", "sectionName": "四标段", "productTypeGuid": "2532342c-4181-e611-93f5-90b11c25ccb5", "productType": "高层住宅", "productGuid": "1e3e1b80-53ba-11e9-9f3a-631a1b30c9e4", "productName": "高层", "bldCode": "0791.2019.06.01.012", "bldName": "高层住宅12#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "5698865e-6afc-4678-b80d-f8476e175f42", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "四标段", "sectionName": "四标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.016", "bldName": "小高层住宅16#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "5e90410f-2313-4dbf-8355-4e7a1074e48d", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "四标段", "sectionName": "四标段", "productTypeGuid": "ca827cb5-f0c6-4aef-92af-f1508597cfc7", "productType": "地下室", "productGuid": "6c247870-53bb-11e9-9f3a-631a1b30c9e4", "productName": "地库", "bldCode": "0791.2019.06.01.043", "bldName": "地库1#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "5af06aaf-342f-4943-8af3-212ea621f5e5", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "四标段", "sectionName": "四标段", "productTypeGuid": "2532342c-4181-e611-93f5-90b11c25ccb5", "productType": "高层住宅", "productGuid": "1e3e1b80-53ba-11e9-9f3a-631a1b30c9e4", "productName": "高层", "bldCode": "0791.2019.06.01.011", "bldName": "高层住宅11#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "969c0f21-ba6a-47d7-91ad-014ac99b3479", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "四标段", "sectionName": "四标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.013", "bldName": "小高层住宅13#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "9d07737a-6e9e-40af-a3a8-9427d14dca61", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "四标段", "sectionName": "四标段", "productTypeGuid": "2a081c9d-5381-e611-93f5-90b11c25ccb5", "productType": "小高层", "productGuid": "f9a1daa0-53b9-11e9-9f3a-631a1b30c9e4", "productName": "小高层", "bldCode": "0791.2019.06.01.015", "bldName": "小高层住宅15#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "73573ede-d4d5-49e1-8a14-2fee952501c4", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null }, { "mpiVersionGuid": "ec8e72dc-9a54-4335-a580-1c816b4b40d7", "projGuid": "24a40d54-1c74-43c6-ae5d-7030f2237cbd", "version": "投资版_201904242_22", "sectionCode": "四标段", "sectionName": "四标段", "productTypeGuid": "2532342c-4181-e611-93f5-90b11c25ccb5", "productType": "高层住宅", "productGuid": "1e3e1b80-53ba-11e9-9f3a-631a1b30c9e4", "productName": "高层", "bldCode": "0791.2019.06.01.014", "bldName": "高层住宅14#", "cerSourceDate": null, "totalArea": null, "totalPrice": null, "totalAvgPrice": null, "id": "75562630-8d7c-4771-9529-b78c7c20eadd", "ghmj_2019年前": null, "ghmj_2019年_一季度": null, "ghmj_2019年_二季度": null, "ghmj_2019年_三季度": null, "ghmj_2019年_四季度": null, "ghmj_2020年_一季度": null, "ghmj_2020年_二季度": null, "ghmj_2020年_三季度": null, "ghmj_2020年_四季度": null, "ghmj_2021年_一季度": null, "ghmj_2021年_二季度": null, "ghmj_2021年_三季度": null, "ghmj_2021年_四季度": null, "ghmj_2022年_一季度": null, "ghmj_2022年_二季度": null, "ghmj_2022年_三季度": null, "ghmj_2022年_四季度": null, "ghmj_2022年后": null, "ghje_2019年前": null, "ghje_2019年_一季度": null, "ghje_2019年_二季度": null, "ghje_2019年_三季度": null, "ghje_2019年_四季度": null, "ghje_2020年_一季度": null, "ghje_2020年_二季度": null, "ghje_2020年_三季度": null, "ghje_2020年_四季度": null, "ghje_2021年_一季度": null, "ghje_2021年_二季度": null, "ghje_2021年_三季度": null, "ghje_2021年_四季度": null, "ghje_2022年_一季度": null, "ghje_2022年_二季度": null, "ghje_2022年_三季度": null, "ghje_2022年_四季度": null, "ghje_2022年后": null } ] } ],
+      showRate: false,
+      columnConfigs: [
+        { label: "供货面积(平米)", prop: "ghmj" },
+        { label: "供货金额(万元)", prop: "ghje" }
+      ]
     };
   },
+  computed: {
+    
+    wdArr() {
+      if (this.wd === "年度") {
+        return [];
+      } else if (this.wd === "季度") {
+        return ["一季度", "二季度", "三季度", "四季度"];
+      } else {
+        return [
+          "一月",
+          "二月",
+          "三月",
+          "四月",
+          "五月",
+          "六月",
+          "七月",
+          "八月",
+          "九月",
+          "十月",
+          "十一月",
+          "十二月"
+        ];
+      }
+    }
+  },
+  watch: {},
+  methods: {
+    handleChange() {
+      // const dynamicsData = {}
+      // this.$set(dynamicsData)
+      // this.data = Object.assign({},this.data,)
+    }
+  }
 };
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-.formitemdiv {
-  display: -webkit-flex; /* Safari */
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  // justify-content:center;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-.formitem {
-  display: -webkit-flex; /* Safari */
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  margin: 2px 20px;
-  width: calc(33.33% - 40px);
-}
-
-.formitem_div {
-  line-height: 28px;
-  flex: 0 0 120px;
-  font-size: small;
-}
-.formitemoneline {
-  align-items: flex-start;
-  margin: 2px 20px;
-  width: calc(100% - 40px);
-}
-.cell-edit-input .el-input,
-.el-input__inner {
-  width: 100%;
-}
-.cell-icon {
-  cursor: pointer;
-  color: #fff;
-}
-.el-row {
-  margin-bottom: 5px;
-}
-.formiteminline {
-  display: -webkit-flex; /* Safari */
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  // justify-content:center;
-  align-items: flex-start;
-}
-.fixButton {
-  right: 0px;
-  left: 0px;
-  position: fixed;
-  bottom: 0;
-  background: #fff;
-  z-index: 300;
-  height: 47px;
-  margin-top: 10px;
-  padding-top: 18px;
-  border: 0;
-  border-top: solid 1px #e9ebee;
-}
-.error_span {
-  color: #f56c6c;
-  font-size: 12px;
-  line-height: 1;
-  padding-top: 4px;
-  left: 0;
-}
-.el-card {
-  overflow: unset;
-}
-.date_width {
-  width: 245px;
-}
-</style>
-<style lang="scss">
-.editCard {
-  margin-top: 10px;
-  .el-card__header {
-    padding: 10px 20px;
-  }
-}
-</style>
