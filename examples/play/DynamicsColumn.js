@@ -31,7 +31,6 @@ export default {
     const columnsNodes = columns.map(item => {
       return this.renderChildrenColumn(item)
     })
-    console.log('columnsNodes',columnsNodes)
     return (
       <el-table-column
             label="供货面积(平米)"
@@ -122,12 +121,13 @@ export default {
             scopedSlots: {
                 default: props => {
                   if (!columnConfig.children || columnConfig.children.length === 0) {
-                    return (<edit-grid-item
-                        value={props.row[columnConfig.prop]}
-                        // eslint-disable-next-line no-return-assign
-                        on-input={ val => props.row[columnConfig.prop] = val }
-                        isEdit={true}
-                      ></edit-grid-item>)
+                    // return (<edit-grid-item
+                    //     value={props.row[columnConfig.prop]}
+                    //     eslint-disable-next-line no-return-assign
+                    //     on-input={ val => props.row[columnConfig.prop] = val }
+                    //     isEdit={true}
+                    //   ></edit-grid-item>)
+                    return (<span>{props.row[columnConfig.prop]}</span>)
                   }
                 }
               }

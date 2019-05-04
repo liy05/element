@@ -12,11 +12,10 @@
       'el-table--enable-row-hover': !store.states.isComplex,
       'el-table--enable-row-transition': (store.states.data || []).length !== 0 && (store.states.data || []).length < 100
     }, tableSize ? `el-table--${ tableSize }` : '']"
-    @mouseleave="handleMouseLeave($event)">
+    >
     <div class="hidden-columns" ref="hiddenColumns"><slot></slot></div>
     <div
       v-if="showHeader"
-      v-mousewheel="handleHeaderFooterMousewheel"
       class="el-table__header-wrapper"
       ref="headerWrapper">
       <table-header
@@ -66,7 +65,6 @@
     <div
       v-if="showSummary"
       v-show="data && data.length > 0"
-      v-mousewheel="handleHeaderFooterMousewheel"
       class="el-table__footer-wrapper"
       ref="footerWrapper">
       <table-footer
@@ -215,7 +213,8 @@
 <script type="text/babel">
   import ElCheckbox from 'element-ui/packages/checkbox';
   import debounce from 'throttle-debounce/debounce';
-  import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
+  // import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
+  import { removeResizeListener } from 'element-ui/src/utils/resize-event';
   import Mousewheel from 'element-ui/src/directives/mousewheel';
   import Locale from 'element-ui/src/mixins/locale';
   import Migrating from 'element-ui/src/mixins/migrating';
@@ -420,11 +419,11 @@
       },
 
       handleHeaderFooterMousewheel(event, data) {
-        const { pixelX, pixelY } = data;
-        if (Math.abs(pixelX) >= Math.abs(pixelY)) {
-          event.preventDefault();
-          this.bodyWrapper.scrollLeft += data.pixelX / 5;
-        }
+        // const { pixelX, pixelY } = data;
+        // if (Math.abs(pixelX) >= Math.abs(pixelY)) {
+        //   event.preventDefault();
+        //   this.bodyWrapper.scrollLeft += data.pixelX / 5;
+        // }
       },
 
       bindEvents() {
@@ -448,9 +447,9 @@
           }
         });
 
-        if (this.fit) {
-          addResizeListener(this.$el, this.resizeListener);
-        }
+        // if (this.fit) {
+        //   addResizeListener(this.$el, this.resizeListener);
+        // }
       },
 
       resizeListener() {
@@ -594,9 +593,7 @@
           };
         } else if (this.maxHeight) {
           return {
-            'max-height': (this.showHeader
-              ? this.maxHeight - this.layout.headerHeight - this.layout.footerHeight
-              : this.maxHeight - this.layout.footerHeight) + 'px'
+            'max-height': this.layout.bodyHeight ? this.layout.bodyHeight + 'px' : ''
           };
         }
         return {};

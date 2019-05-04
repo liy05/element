@@ -1,4 +1,4 @@
-import ElSimpleTable from './src/simple-table';
+import ElSimpleTable from './src/Table';
 
 /* istanbul ignore next */
 ElSimpleTable.install = function(Vue) {

@@ -100,11 +100,12 @@ export default {
                     <th
                       colspan={ column.colSpan }
                       rowspan={ column.rowSpan }
-                      on-mousemove={ ($event) => this.handleMouseMove($event, column) }
-                      on-mouseout={ this.handleMouseOut }
-                      on-mousedown={ ($event) => this.handleMouseDown($event, column) }
-                      on-click={ ($event) => this.handleHeaderClick($event, column) }
-                      on-contextmenu={ ($event) => this.handleHeaderContextMenu($event, column) }
+                      // 性能优化 删除事件
+                      // on-mousemove={ ($event) => this.handleMouseMove($event, column) }
+                      // on-mouseout={ this.handleMouseOut }
+                      // on-mousedown={ ($event) => this.handleMouseDown($event, column) }
+                      // on-click={ ($event) => this.handleHeaderClick($event, column) }
+                      // on-contextmenu={ ($event) => this.handleHeaderContextMenu($event, column) }
                       style={ this.getHeaderCellStyle(rowIndex, cellIndex, columns, column) }
                       class={ this.getHeaderCellClass(rowIndex, cellIndex, columns, column) }
                       key={ column.id }>
@@ -209,8 +210,10 @@ export default {
   },
 
   mounted() {
-    const { prop, order } = this.defaultSort;
-    this.store.commit('sort', { prop, order });
+    // 性能优化 删除排序功能
+    // const { prop, order } = this.defaultSort;
+    // const init = true;
+    // this.store.commit('sort', { prop, order, init });
   },
 
   beforeDestroy() {

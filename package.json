@@ -79,6 +79,7 @@
     "babel-plugin-module-resolver": "^2.2.0",
     "babel-plugin-syntax-jsx": "^6.18.0",
     "babel-plugin-transform-vue-jsx": "^3.7.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-2": "^6.24.1",
     "babel-regenerator-runtime": "^6.5.0",
