@@ -26,6 +26,7 @@
   "table": "./packages/table/index.js",
   "table-column": "./packages/table-column/index.js",
   "simple-table": "./packages/simple-table/index.js",
+  "bigdata-table": "./packages/bigdata-table/index.js",
   "date-picker": "./packages/date-picker/index.js",
   "time-select": "./packages/time-select/index.js",
   "time-picker": "./packages/time-picker/index.js",

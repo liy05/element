@@ -27,6 +27,7 @@ import ButtonGroup from '../packages/button-group/index.js';
 import Table from '../packages/table/index.js';
 import TableColumn from '../packages/table-column/index.js';
 import SimpleTable from '../packages/simple-table/index.js';
+import BigdataTable from '../packages/bigdata-table/index.js';
 import DatePicker from '../packages/date-picker/index.js';
 import TimeSelect from '../packages/time-select/index.js';
 import TimePicker from '../packages/time-picker/index.js';
@@ -107,6 +108,7 @@ const components = [
   Table,
   TableColumn,
   SimpleTable,
+  BigdataTable,
   DatePicker,
   TimeSelect,
   TimePicker,
@@ -219,6 +221,7 @@ export default {
   Table,
   TableColumn,
   SimpleTable,
+  BigdataTable,
   DatePicker,
   TimeSelect,
   TimePicker,

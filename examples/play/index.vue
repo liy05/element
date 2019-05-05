@@ -1,6 +1,6 @@
 <template>
 
-      <el-simple-table
+      <el-bigdata-table
         :data="data"
         border
         fit
@@ -8,8 +8,7 @@
         :isTree="true"
         row-key="id"
         :isTreeExpandAll="true"
-        :highlight-current-row="true"
-        height="500px"
+        height="500"
       >
         <el-table-column
           file-icon="icon icon-file"
@@ -81,7 +80,7 @@
             fixed="right"
           >
           </el-table-column>
-      </el-simple-table>
+      </el-bigdata-table>
 </template>
 
 <script>
