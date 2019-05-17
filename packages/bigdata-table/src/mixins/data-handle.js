@@ -36,7 +36,7 @@ export default {
       /**
        * @description 根据表格容器高度计算内置单个表格（1/3）渲染的行数基础上额外渲染的行数，行数越多表格接替渲染效果越好，但越耗性能
        */
-      appendNum: 15,
+      appendNum: 10,
       // 一块数据显示的数据条数
       itemNum: 0,
       /**
