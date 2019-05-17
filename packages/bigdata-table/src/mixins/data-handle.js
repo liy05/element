@@ -1,8 +1,27 @@
+/* eslint-disable no-debugger */
 /* eslint-disable radix */
 // import TableStore from '../table-store';
 // import TableLayout from '../table-layout';
 import ElTableBody from '../table-body.js';
 import { getScrollbarWidth } from '../util/index.js';
+const flattenData = function(data) {
+  if (!data) return data;
+  let newData = [];
+  const flatten = arr => {
+    arr.forEach((item) => {
+      newData.push(item);
+      if (Array.isArray(item.children)) {
+        flatten(item.children);
+      }
+    });
+  };
+  flatten(data);
+  if (data.length === newData.length) {
+    return data;
+  } else {
+    return newData;
+  }
+};
 
 export default {
   data() {
@@ -63,7 +82,6 @@ export default {
     initGroupHeight(data) {
       //  分组数据
       let moduleNb = Math.ceil(this.height / this.rowHeight) + this.appendNum;
-      console.log('moduleNb', moduleNb);
       let groupHeight = {};
       if (data.length > moduleNb) {
         for (let i in data) {
@@ -245,6 +263,12 @@ export default {
     data: {
       immediate: true,
       handler(value) {
+        // 树
+        if (this.isTree) {
+          this.store.states.treeData = this.getTableTreeData(value);
+          value = flattenData(value);
+        }
+        this.store.commit('setData', value);
         this.insideTableData = this.setIndex(value);
         this.groupHeight = this.initGroupHeight(value);
         this.resize();

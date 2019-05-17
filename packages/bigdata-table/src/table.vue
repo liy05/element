@@ -242,24 +242,24 @@
   import dataHandle from './mixins/data-handle.js';
   import renderDom from './dom/renderDom.js';
 
-  const flattenData = function(data) {
-    if (!data) return data;
-    let newData = [];
-    const flatten = arr => {
-      arr.forEach((item) => {
-        newData.push(item);
-        if (Array.isArray(item.children)) {
-          flatten(item.children);
-        }
-      });
-    };
-    flatten(data);
-    if (data.length === newData.length) {
-      return data;
-    } else {
-      return newData;
-    }
-  };
+  // const flattenData = function(data) {
+  //   if (!data) return data;
+  //   let newData = [];
+  //   const flatten = arr => {
+  //     arr.forEach((item) => {
+  //       newData.push(item);
+  //       if (Array.isArray(item.children)) {
+  //         flatten(item.children);
+  //       }
+  //     });
+  //   };
+  //   flatten(data);
+  //   if (data.length === newData.length) {
+  //     return data;
+  //   } else {
+  //     return newData;
+  //   }
+  // };
 
   let tableIdSeed = 1;
 
@@ -689,11 +689,11 @@
       data: {
         immediate: true,
         handler(value) {
-          if (this.isTree) {
-            this.store.states.treeData = this.getTableTreeData(value);
-            value = flattenData(value);
-          }
-          this.store.commit('setData', value);
+          // if (this.isTree) {
+          //   this.store.states.treeData = this.getTableTreeData(value);
+          //   value = flattenData(value);
+          // }
+          // this.store.commit('setData', value);
           if (this.$ready) {
             this.$nextTick(() => {
               this.doLayout();
