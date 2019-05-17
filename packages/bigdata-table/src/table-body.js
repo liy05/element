@@ -93,11 +93,11 @@ export default {
                 v-show={ treeNode ? treeNode.display : true }
                 style={ this.rowStyle ? this.getRowStyle(row, this.fvIndex($index, row)) : null }
                 key={ rowKey }
-                on-dblclick={ ($event) => this.handleDoubleClick($event, row) }
+                // on-dblclick={ ($event) => this.handleDoubleClick($event, row) }
                 on-click={ ($event) => this.handleClick($event, row) }
-                on-contextmenu={ ($event) => this.handleContextMenu($event, row) }
-                on-mouseenter={ _ => this.handleMouseEnter(this.fvIndex($index, row)) }
-                on-mouseleave={ _ => this.handleMouseLeave() }
+                // on-contextmenu={ ($event) => this.handleContextMenu($event, row) }
+                // on-mouseenter={ _ => this.handleMouseEnter(this.fvIndex($index, row)) }
+                // on-mouseleave={ _ => this.handleMouseLeave() }
                 class={ rowClasses }>
                 {
                   this._l(this.columns, (column, cellIndex) => {
@@ -133,8 +133,9 @@ export default {
                           class={ this.getCellClass(this.fvIndex($index, row), cellIndex, row, column) }
                           rowspan={ rowspan }
                           colspan={ colspan }
-                          on-mouseenter={ ($event) => this.handleCellMouseEnter($event, row) }
-                          on-mouseleave={ this.handleCellMouseLeave }>
+                          // on-mouseenter={ ($event) => this.handleCellMouseEnter($event, row) }
+                          // on-mouseleave={ this.handleCellMouseLeave }
+                        >
                           {
                             column.renderCell.call(
                               this._renderProxy,
@@ -240,27 +241,200 @@ export default {
       this.data.filter((e, i) => {
         e.initRowIndex = i;
       });
+      // 支持树，当收缩时，需要过滤掉隐藏的列来计算条数
+      // const displayRows = this.data.filter(item =>{
+      //   return item.display
+      // })
+      let displayRows = this.data
+      if (this.table.isTree) {
+        displayRows = this.data.filter(item=>{
+          return this.store.states.treeData[item[this.table.rowKey]].display === true;
+        });
+      }
       switch (this.tableIndex) {
         case 1:
           count1 = this.times0 * this.itemNum * 3;
-          data = this.data.slice(count1, count1 + this.itemNum);
+          let startIndex = count1;
+          let endIndex = count1 + this.itemNum;
+          // 取显示的列
+          if (this.table.isTree) {
+            if (startIndex >= displayRows.length) {
+              startIndex = displayRows[displayRows.length - 1].initRowIndex + 1;
+            } else {
+              startIndex = displayRows[startIndex].initRowIndex;
+            }
+            if (endIndex >= displayRows.length) {
+              endIndex = displayRows[displayRows.length - 1].initRowIndex + 1;
+            } else {
+              endIndex = displayRows[endIndex].initRowIndex + 1;
+            }
+          }
+          data = this.data.slice(startIndex, endIndex);
+          console.log('index', {startIndex, endIndex})
+          console.log('data', data)
           break;
         case 2:
           count2 = this.times1 * this.itemNum * 3;
-          data = this.data.slice(count2 + this.itemNum, count2 + this.itemNum * 2);
+          let startIndex2 = count2 + this.itemNum;
+          let endIndex2 = count2 + this.itemNum * 2;
+          // 取显示的列
+          if (this.table.isTree) {
+            if (startIndex2 >= displayRows.length) {
+              startIndex2 = displayRows[displayRows.length - 1].initRowIndex + 1;
+            } else {
+              startIndex2 = displayRows[startIndex2].initRowIndex;
+            }
+            if (endIndex2 >= displayRows.length) {
+              endIndex2 = displayRows[displayRows.length - 1].initRowIndex + 1;
+            } else {
+              endIndex2 = displayRows[endIndex2].initRowIndex + 1;
+            }
+          }
+          data = this.data.slice(startIndex2, endIndex2);
+          console.log('index', {startIndex2, endIndex2})
+          console.log('data', data)
           break;
         case 3:
           count3 = this.times2 * this.itemNum * 3;
-          data = this.data.slice(count3 + this.itemNum * 2, count3 + this.itemNum * 3);
+          let startIndex3 = count3 + this.itemNum * 2;
+          let endIndex3 = count3 + this.itemNum * 3;
+          // 取显示的列
+          if (this.table.isTree) {
+            if (startIndex3 >= displayRows.length) {
+              startIndex3 = displayRows[displayRows.length - 1].initRowIndex + 1;
+            } else {
+              startIndex3 = displayRows[startIndex3].initRowIndex;
+            }
+            if (endIndex3 >= displayRows.length) {
+              endIndex3 = displayRows[displayRows.length - 1].initRowIndex + 1;
+            } else {
+              endIndex3 = displayRows[endIndex3].initRowIndex + 1;
+            }
+          }
+          data = this.data.slice(startIndex3, endIndex3);
           break;
       }
       //  选中行
       this.$nextTick(() => {
         this.dfCurrentRow(this.store.states.currentRow);
       });
-
       return data;
     }
+    // timesTableData() {
+    //   let data = [];
+    //   let count1 = 0;
+    //   let count2 = 0;
+    //   let count3 = 0;
+    //   this.data.filter((e, i) => {
+    //     e.initRowIndex = i;
+    //   });
+    //   // 支持树，当收缩时，需要过滤掉隐藏的列来计算条数
+    //   // const displayRows = this.data.filter(item =>{
+    //   //   return item.display
+    //   // })
+    //   debugger
+    //   let displayRows = this.data
+    //   if (this.table.isTree) {
+    //     displayRows = this.data.filter(item=>{
+    //       return this.store.states.treeData[item[this.table.rowKey]].display;
+    //     });
+    //   }
+    //   switch (this.tableIndex) {
+    //     case 1:
+    //       count1 = this.times0 * this.itemNum * 3;
+    //       let startIndex = count1;
+    //       let endIndex = count1 + this.itemNum;
+    //       // 取显示的列
+    //       if (this.table.isTree) {
+    //         startIndex = this.data.findIndex(item=>{
+    //           item[this.table.rowKey] === displayRows[count1][this.table.rowKey]
+    //         })
+    //         let displayEndIndex = count1 + this.itemNum;
+    //         if (displayEndIndex >= displayRows.length) {
+    //           displayEndIndex = displayRows.length - 1
+    //         }
+    //         endIndex = this.data.findIndex(item=>{
+    //           item[this.table.rowKey] === displayRows[displayEndIndex][this.table.rowKey]
+    //         })
+    //       }
+    //       data = this.data.slice(startIndex, endIndex);
+    //       break;
+    //     case 2:
+    //       count2 = this.times1 * this.itemNum * 3;
+    //       let startIndex2 = count2 + this.itemNum;
+    //       let endIndex2 = count2 + this.itemNum * 2;
+    //       // 取显示的列
+    //       if (this.table.isTree) {
+    //         startIndex2 = this.data.findIndex(item=>{
+    //           item[this.table.rowKey] === displayRows[count2 + this.itemNum][this.table.rowKey]
+    //         })
+    //         let displayEndIndex = count2 + this.itemNum * 2;
+    //         if (displayEndIndex >= displayRows.length) {
+    //           displayEndIndex = displayRows.length - 1
+    //         }
+    //         endIndex2 = this.data.findIndex(item=>{
+    //           item[this.table.rowKey] === displayRows[displayEndIndex][this.table.rowKey]
+    //         })
+    //       }
+    //       data = this.data.slice(startIndex2, endIndex2);
+    //       break;
+    //     case 3:
+    //       count3 = this.times2 * this.itemNum * 3;
+    //       let startIndex3 = count3 + this.itemNum * 2;
+    //       let endIndex3 = count3 + this.itemNum * 3;
+    //       // 取显示的列
+    //       if (this.table.isTree) {
+    //         startIndex2 = this.data.findIndex(item=>{
+    //           item[this.table.rowKey] === displayRows[count3 + this.itemNum * 2][this.table.rowKey]
+    //         })
+    //         let displayEndIndex = count3 + this.itemNum * 3;
+    //         if (displayEndIndex >= displayRows.length) {
+    //           displayEndIndex = displayRows.length - 1
+    //         }
+    //         endIndex2 = this.data.findIndex(item=>{
+    //           item[this.table.rowKey] === displayRows[displayEndIndex][this.table.rowKey]
+    //         })
+    //       }
+    //       data = this.data.slice(startIndex3, endIndex3);
+    //       break;
+    //   }
+    //   //  选中行
+    //   this.$nextTick(() => {
+    //     this.dfCurrentRow(this.store.states.currentRow);
+    //   });
+
+    //   return data;
+    // }
+    //  取数据
+    // timesTableData() {
+    //   let data = [];
+    //   let count1 = 0;
+    //   let count2 = 0;
+    //   let count3 = 0;
+    //   this.data.filter((e, i) => {
+    //     e.initRowIndex = i;
+    //   });
+    //   switch (this.tableIndex) {
+    //     case 1:
+    //       count1 = this.times0 * this.itemNum * 3;
+    //       data = this.data.slice(count1, count1 + this.itemNum);
+    //       break;
+    //     case 2:
+    //       count2 = this.times1 * this.itemNum * 3;
+    //       data = this.data.slice(count2 + this.itemNum, count2 + this.itemNum * 2);
+    //       break;
+    //     case 3:
+    //       count3 = this.times2 * this.itemNum * 3;
+    //       data = this.data.slice(count3 + this.itemNum * 2, count3 + this.itemNum * 3);
+    //       break;
+    //   }
+    //   //  选中行
+    //   this.$nextTick(() => {
+    //     this.dfCurrentRow(this.store.states.currentRow);
+    //   });
+
+    //   return data;
+    // }
   },
 
   watch: {

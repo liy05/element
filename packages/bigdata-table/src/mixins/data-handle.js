@@ -65,6 +65,7 @@ export default {
     };
   },
   methods: {
+
     //  滚动条拖动
     handleScroll(e) {
       const ele = e.srcElement || e.target;
@@ -81,21 +82,44 @@ export default {
     //
     initGroupHeight(data) {
       //  分组数据
-      let moduleNb = Math.ceil(this.height / this.rowHeight) + this.appendNum;
-      let groupHeight = {};
-      if (data.length > moduleNb) {
-        for (let i in data) {
-          let nb = (+i + 1) * moduleNb;
-          if (nb > data.length) {
-            groupHeight[i] = (data.length % moduleNb) * this.rowHeight;
-            break;
+      if (this.isTree && this.store.states.treeData) {
+        // 去掉树收缩隐藏的列，使用this.store.states.treeData
+        const treeShowArr = data.filter(item=>{
+          return this.store.states.treeData[item[this.rowKey]].display;
+        });
+        let moduleNb = Math.ceil(this.height / this.rowHeight) + this.appendNum;
+        let groupHeight = {};
+        if (treeShowArr.length > moduleNb) {
+          for (let i in treeShowArr) {
+            let nb = (+i + 1) * moduleNb;
+            if (nb > treeShowArr.length) {
+              groupHeight[i] = (treeShowArr.length % moduleNb) * this.rowHeight;
+              break;
+            }
+            groupHeight[i] = moduleNb * this.rowHeight;
           }
-          groupHeight[i] = moduleNb * this.rowHeight;
+        } else {
+          groupHeight[0] = treeShowArr.length * this.rowHeight;
         }
+        return groupHeight;
       } else {
-        groupHeight[0] = data.length * this.rowHeight;
+        let moduleNb = Math.ceil(this.height / this.rowHeight) + this.appendNum;
+        let groupHeight = {};
+        if (data.length > moduleNb) {
+          for (let i in data) {
+            let nb = (+i + 1) * moduleNb;
+            if (nb > data.length) {
+              groupHeight[i] = (data.length % moduleNb) * this.rowHeight;
+              break;
+            }
+            groupHeight[i] = moduleNb * this.rowHeight;
+          }
+        } else {
+          groupHeight[0] = data.length * this.rowHeight;
+        }
+        return groupHeight;
       }
-      return groupHeight;
+
     },
     //  设置顶部定位
     setTopPlace() {
@@ -221,6 +245,12 @@ export default {
     // canEdit为true时调用此方法使第row+1行第col+1列变为编辑状态，这里的行列指的是表格显示的行和除序列号列的列
     editCell(row, col) {
       this._editCell(row, col);
+    },
+    DataResize() {
+      const value = flattenData(this.data);
+      //  重置高度分组
+      this.groupHeight = this.initGroupHeight(value);
+      this.resize();
     }
   },
   computed: {
@@ -239,6 +269,10 @@ export default {
         mdHeight += n;
       }
       return this.totalRowHeight - mdHeight; // 占位容器的总高度(上 + 下)
+    },
+    treeDataToFix() {
+      // 树形结构时，树对象，用于计算高度，和展开收缩时重新计算高度
+      return this.store.states.treeData;
     }
   },
   watch: {

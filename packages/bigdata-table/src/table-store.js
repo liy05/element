@@ -719,6 +719,7 @@ TableStore.prototype.toggleTreeExpansion = function(rowKey) {
     };
     traverse(node.children);
   }
+  this.table.DataResize();
 };
 
 TableStore.prototype.loadData = function(row, treeNode) {
