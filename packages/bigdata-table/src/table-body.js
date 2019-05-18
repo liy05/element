@@ -252,6 +252,9 @@ export default {
       //     return this.store.states.treeData[item[this.table.rowKey]].display === true;
       //   });
       // }
+      if (displayRows.length === 0) {
+        return []
+      }
       switch (this.tableIndex) {
         case 1:
           count1 = this.times0 * this.itemNum * 3;
