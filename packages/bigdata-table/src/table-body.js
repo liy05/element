@@ -235,7 +235,6 @@ export default {
     },
     //  取数据
     timesTableData() {
-      console.time()
       let data = [];
       let count1 = 0;
       let count2 = 0;
@@ -272,8 +271,6 @@ export default {
             }
           }
           data = this.data.slice(startIndex, endIndex);
-          console.log('index', {startIndex, endIndex})
-          console.log('data', data)
           break;
         case 2:
           count2 = this.times1 * this.itemNum * 3;
@@ -293,8 +290,6 @@ export default {
             }
           }
           data = this.data.slice(startIndex2, endIndex2);
-          console.log('index', {startIndex2, endIndex2})
-          console.log('data', data)
           break;
         case 3:
           count3 = this.times2 * this.itemNum * 3;
@@ -320,7 +315,6 @@ export default {
       this.$nextTick(() => {
         this.dfCurrentRow(this.store.states.currentRow);
       });
-      console.timeEnd()
       return data;
     }
     // timesTableData() {
