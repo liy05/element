@@ -178,9 +178,16 @@ export default {
     },
     //  生成三个Vnode的数组
     getTables(h, prop) {
-      let table1 = this.getItemTable(h, this.table1Data, 1, prop);
-      let table2 = this.getItemTable(h, this.table2Data, 2, prop);
-      let table3 = this.getItemTable(h, this.table3Data, 3, prop);
+      let displayRows = this.treeShowArr;
+      // if (this.isTree) {
+      //   const listdata = flattenData(this.data);
+      //   displayRows = listdata.filter(item=>{
+      //     return this.store.states.treeData[item[this.rowKey]].display === true;
+      //   });
+      // }
+      let table1 = this.getItemTable(h, this.table1Data, 1, prop, displayRows);
+      let table2 = this.getItemTable(h, this.table2Data, 2, prop, displayRows);
+      let table3 = this.getItemTable(h, this.table3Data, 3, prop, displayRows);
       if (this.currentIndex === 0) return [table1, table2, table3];
       else if (this.currentIndex === 1) return [table2, table3, table1];
       else return [table3, table1, table2];
@@ -193,7 +200,7 @@ export default {
       }, this.getTables(h, prop));
     },
     //  生成body
-    getItemTable(h, data, index, prop) {
+    getItemTable(h, data, index, prop, displayRows) {
       return h(ElTableBody, {
         style: {width: '100%'},
         props: {
@@ -211,7 +218,8 @@ export default {
           itemNum: this.itemNum,
           tableIndex: index,
           groupIndex: +this.groupIndex,
-          itemRowHeight: this.rowHeight
+          itemRowHeight: this.rowHeight,
+          displayRows
         },
         on: {
           //
@@ -273,6 +281,16 @@ export default {
     treeDataToFix() {
       // 树形结构时，树对象，用于计算高度，和展开收缩时重新计算高度
       return this.store.states.treeData;
+    },
+    treeShowArr() {
+      let treeShowArr = this.store.states.data;
+      if (this.isTree && this.store.states.treeData) {
+        // 去掉树收缩隐藏的列，使用this.store.states.treeData
+        treeShowArr = this.store.states.data.filter(item=>{
+          return this.store.states.treeData[item[this.rowKey]].display;
+        });
+      }
+      return treeShowArr;
     }
   },
   watch: {

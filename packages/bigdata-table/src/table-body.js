@@ -38,7 +38,8 @@ export default {
     itemRowHeight: {
       type: Number,
       default: 28
-    }
+    },
+    displayRows: Array
   },
 
   render(h) {
@@ -234,6 +235,7 @@ export default {
     },
     //  取数据
     timesTableData() {
+      console.time()
       let data = [];
       let count1 = 0;
       let count2 = 0;
@@ -245,12 +247,12 @@ export default {
       // const displayRows = this.data.filter(item =>{
       //   return item.display
       // })
-      let displayRows = this.data
-      if (this.table.isTree) {
-        displayRows = this.data.filter(item=>{
-          return this.store.states.treeData[item[this.table.rowKey]].display === true;
-        });
-      }
+      let displayRows = this.displayRows
+      // if (this.table.isTree) {
+      //   displayRows = this.data.filter(item=>{
+      //     return this.store.states.treeData[item[this.table.rowKey]].display === true;
+      //   });
+      // }
       switch (this.tableIndex) {
         case 1:
           count1 = this.times0 * this.itemNum * 3;
@@ -266,7 +268,7 @@ export default {
             if (endIndex >= displayRows.length) {
               endIndex = displayRows[displayRows.length - 1].initRowIndex + 1;
             } else {
-              endIndex = displayRows[endIndex].initRowIndex + 1;
+              endIndex = displayRows[endIndex].initRowIndex;
             }
           }
           data = this.data.slice(startIndex, endIndex);
@@ -287,7 +289,7 @@ export default {
             if (endIndex2 >= displayRows.length) {
               endIndex2 = displayRows[displayRows.length - 1].initRowIndex + 1;
             } else {
-              endIndex2 = displayRows[endIndex2].initRowIndex + 1;
+              endIndex2 = displayRows[endIndex2].initRowIndex;
             }
           }
           data = this.data.slice(startIndex2, endIndex2);
@@ -308,7 +310,7 @@ export default {
             if (endIndex3 >= displayRows.length) {
               endIndex3 = displayRows[displayRows.length - 1].initRowIndex + 1;
             } else {
-              endIndex3 = displayRows[endIndex3].initRowIndex + 1;
+              endIndex3 = displayRows[endIndex3].initRowIndex;
             }
           }
           data = this.data.slice(startIndex3, endIndex3);
@@ -318,6 +320,7 @@ export default {
       this.$nextTick(() => {
         this.dfCurrentRow(this.store.states.currentRow);
       });
+      console.timeEnd()
       return data;
     }
     // timesTableData() {
