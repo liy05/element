@@ -85,7 +85,11 @@ export default {
       if (this.isTree && this.store.states.treeData) {
         // 去掉树收缩隐藏的列，使用this.store.states.treeData
         const treeShowArr = data.filter(item=>{
-          return this.store.states.treeData[item[this.rowKey]].display;
+          if (this.store.states.treeData[item[this.rowKey]]) {
+            return this.store.states.treeData[item[this.rowKey]].display;
+          } else {
+            return true;
+          }
         });
         let moduleNb = Math.ceil(this.height / this.rowHeight) + this.appendNum;
         let groupHeight = {};
@@ -287,7 +291,11 @@ export default {
       if (this.isTree && this.store.states.treeData) {
         // 去掉树收缩隐藏的列，使用this.store.states.treeData
         treeShowArr = this.store.states.data.filter(item=>{
-          return this.store.states.treeData[item[this.rowKey]].display;
+          if (this.store.states.treeData[item[this.rowKey]]) {
+            return this.store.states.treeData[item[this.rowKey]].display;
+          } else {
+            return true;
+          }
         });
       }
       return treeShowArr;
