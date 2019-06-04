@@ -247,7 +247,7 @@ export default {
   },
 
   created() {
-    this.activateTooltip = debounce(100, tooltip => tooltip.handleShowPopper());
+    this.activateTooltip = debounce(50, tooltip => tooltip.handleShowPopper());
   },
 
   methods: {

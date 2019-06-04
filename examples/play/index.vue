@@ -63,7 +63,7 @@
       </span>
     </div>
     <template>
-      <el-bigdata-table
+      <el-simple-table
         :data="showData"
         border
         fit
@@ -186,7 +186,7 @@
             >填写</el-button>
           </template>
         </el-table-column>
-      </el-bigdata-table>
+      </el-simple-table>
     </template>
     <!-- 编辑填写页面 -->
     <el-dialog

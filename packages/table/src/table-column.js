@@ -193,6 +193,10 @@ export default {
     tree: {
       type: Boolean,
       default: false
+    },
+    isSum: {
+      type: Boolean,
+      default: false
     }
   },
 
